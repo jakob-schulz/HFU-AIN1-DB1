@@ -1,0 +1,144 @@
+\documentclass[a4paper,11pt,titlepage]{article}
+
+\usepackage{ucs}
+% per input encoding kann man Umlaute direkt einsetzten, aber  dann ist man von Font des jeweiligen Rechners abh"angig. Daher mag ich es nicht!
+%\usepackage[utf8x]{inputenc}
+\usepackage[german,ngerman]{babel}
+\usepackage{fontenc}
+\usepackage[pdftex]{graphicx}
+%\usepackage{latexsym}
+\usepackage[pdftex]{hyperref}
+\usepackage{color}
+\renewcommand*{\thesubsection}{\alph{subsection}.}
+
+\begin{document}
+
+% hier aktuelle Uebungsnummer einfuegen
+\title{Datenbanken\\
+Ausarbeitung Aufgabenblatt 2}
+
+% Namen der Bearbeiter einfuegen
+
+\author{Jakob Schulz}
+
+% aktuelles Datum einfuegen
+
+\date{16. Oktober 2023}
+
+\maketitle{\thispagestyle{plain}}
+
+\section{Aufgabe}
+
+\subsection{}
+Die Spaltenkombinationen aus Name+ Land+ Einwohner+ Fl"ache ergibt einen Schl"ussel. Als weiterer Schl"ussel k"önnte man ID w"ählen. Zus"atzlich w"are jede weitere Kombination mit ID als Schl"ussel möglich.\\
+Bevorzugt von mir: ID als Prim"archl"ussel w"ahlen
+\subsection{}
+Neue Datenbank erzeugt \ $\sim$/welt\\
+Befehl:
+\begin{verbatim}
+create table orte(
+name varchar(20),
+land varchar(20), 
+einwohner int,
+flaeche int,
+ID int primary key)
+\end{verbatim}
+
+\subsection{}
+\begin{verbatim}
+insert into orte values ('Köln', 'Deutschland', 1073096, 405010000, 1);
+insert into orte values ('Stuttgart', 'Deutschland', 634830, 207400000, 2)
+insert into orte values ('München', 'Deutschland', 1472000, 310700000 , 3);
+insert into orte values ('Berlin', 'Deutschland', 3645000, 891800000, 4)
+\end{verbatim}
+Funktionstüchtigen Code aus LaTex kopieren. (Apostrophe werden falsch dargestellt)
+\subsection{}
+\begin{verbatim}
+insert into orte values ('Paris', 'Frankreich', 2161000, 105000000 , 5);\\
+insert into orte values ('Paris', 'USA', 24407, 96010000, 6)
+\end{verbatim}
+Funktionstüchtigen Code aus LaTex kopieren. (Apostrophe werden falsch dargestellt)
+\subsection{}
+Es kommt eine Fehlermeldung:\\
+\textcolor{red}{Eindeutiger Index oder Prim"arschl"ussel verletzt: "PRIMARY KEY ON PUBLIC.ORTE(ID) ( /* key:6 */ 'Paris', 'USA', 24407, 96010000, 6)"\\
+Unique index or primary key violation: "PRIMARY KEY ON PUBLIC.ORTE(ID) ( /* key:6 */ 'Paris', 'USA', 24407, 96010000, 6)"; SQL\\					
+statement: insert into orte values ('Paris', 'USA', 24407, 96010000, 6)}
+
+\section{Aufgabe}
+\subsection{}
+Die Spaltenkombination aus NameDerAttraktion+ Beschreibung+ Stadt ergibt einen Schl"ussel. Als weiterer Schl"ussel k"onnte man eine AttraktionsID (AID) w"ahlen. Zus"atzlich w"are jede weitere Kombination mit AID als Schl"ussel möglich. (Also bspw. Stadt+ AID)\\
+Meine Wahl: AID als Prim"arschl"ussel
+\subsection{}
+\begin{verbatim}
+create table attraktionen (\\
+name varchar(30),\\
+beschreibung varchar(50),\\
+stadt varchar(20),\\
+AID int primary key\\
+)
+
+\end{verbatim}
+\subsection{}
+
+\subsection{}
+Zusammenhang: 	Jede Attraktion ist in einer Stadt bzw. in der N"ahe von einer Stadt. In einer Stadt können mehrere Attraktionen sein
+\section{Aufgabe}
+\subsection{}
+Fehlercode: \textcolor{red}{Eindeutiger Index oder Primärschlüssel verletzt: "PUBLIC.C\_EINDEUTIG\_INDEX\_5 ON PUBLIC.T(C NULLS FIRST) VALUES ( /* 1 */ 0 )"\\
+Unique index or primary key violation: "PUBLIC.C\_EINDEUTIG\_INDEX\_5 ON PUBLIC.T(C NULLS FIRST) VALUES ( /* 1 */ 0 )";\\ SQL statement: alter table t add constraint c\_eindeutig unique(c)}\\
+Der Fehler besteht darin, dass die Spalte "`c"' mittels Integritätsregel als eindeutig bezeichnet wird, obwohl bereits Doubletten in der Spalte "`c"' enthalten sind.\\
+ $\Rightarrow$ Werte der Spalte sollen eindeutig sein, sind aber nicht eindeutig
+\newpage
+\subsection{}
+\begin{verbatim}
+create table titanic
+(
+class int,
+survived int,
+name varchar(100),
+gender varchar(20),
+age int,
+sibsp int,
+parch int,
+ticket varchar(30),
+fare int,
+cabin varchar(20),
+embarked varchar(10),
+boat varchar(20),
+body int,
+home varchar(50)
+)
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+Select*
+from csvread('C:\Users\jakob\Desktop\Hochschule Furtwangen\
+1. Semester\Datenbanken\Übungen\titanic.csv')
+\end{verbatim}
+Funktionstüchtigen Code aus LaTex kopieren. (Apostrophe werden falsch dargestellt)
+\subsection{}
+\begin{verbatim}
+insert into titanic(
+Select*
+from csvread('C:\Users\jakob\Desktop\Hochschule Furtwangen\
+1. Semester\Datenbanken\Übungen\titanic.csv'))
+\end{verbatim}
+Funktionstüchtigen Code aus LaTex kopieren. (Apostrophe werden falsch dargestellt)
+\subsection{}
+Class $\Rightarrow$ Klasse in der Passagier reist\\
+Survived $\Rightarrow$ Ob passagier überlebt hat oder nicht\\
+Name $\Rightarrow$  Name \\
+Gender $\Rightarrow$ Geschlecht\\
+Age $\Rightarrow$ Alter\\
+SIBSP $\Rightarrow$ Anzahl der Ehepartner oder Geschwister\\
+Parch $\Rightarrow$ Anzahl Elternteile oder Geschwister\\
+Ticket $\Rightarrow$ Ticketart/Ticketnummer\\
+Fare $\Rightarrow$ Preis\\
+Cabin $\Rightarrow$ Kabine\\
+Embarked $\Rightarrow$ Anfangsbuchstabe des Zustiegshafens\\
+Boat $\Rightarrow$ Auf welchem Rettungsboot die Passagiere waren\\
+Body $\Rightarrow$ Nummerierung der Opfer\\
+Home $\Rightarrow$ Wohnort der Passagiere\\
+Schlüssel: alter table titanic add constraint p\_eindeutig unique(name, gender, age, home)\\
+Primärschlüssel $\Rightarrow$ Minimaler Schlüssel
+\end{document}

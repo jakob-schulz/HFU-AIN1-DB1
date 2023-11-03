@@ -1,0 +1,316 @@
+\documentclass[a4paper,11pt,titlepage]{article}
+
+\usepackage{ucs}
+% per input encoding kann man Umlaute direkt einsetzten, aber  dann ist man von Font des jeweiligen Rechners abh"angig. Daher mag ich es nicht!
+%\usepackage[utf8x]{inputenc}
+\usepackage[german,ngerman]{babel}
+\usepackage{fontenc}
+\usepackage[pdftex]{graphicx}
+%\usepackage{latexsym}
+\usepackage[pdftex]{hyperref}
+\usepackage{color}
+
+\renewcommand*{\thesubsection}{\alph{subsection}.}
+
+\begin{document}
+
+% hier aktuelle Uebungsnummer einfuegen
+\title{Datenbanken\\
+Ausarbeitung Aufgabenblatt 3}
+
+% Namen der Bearbeiter einfuegen
+
+\author{Jakob Schulz}
+
+% aktuelles Datum einfuegen
+
+\date{23. Oktober 2023}
+
+\maketitle{\thispagestyle{plain}}
+
+\section{Aufgabe}
+\subsection{}
+Befehl: drop table \dots
+\begin{verbatim}
+create table orte 
+(
+ort_id int generated always as identity primary key,
+name varchar(80),
+land varchar(50),
+einwohner int,
+flaeche int
+)
+create table attraktionen(
+a_id int generated always as identity primary key,
+name varchar(50),
+beschreibung varchar(50),
+ort_id int,
+foreign key(ort_id) references orte(ort_id)
+)
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+insert into orte(name, land, einwohner, flaeche) 
+values ('Köln', 'Deutschland', 1073096, 405010000);
+
+insert into orte(name, land, einwohner, flaeche) 
+values ('Stuttgart', 'Deutschland', 634830, 207400000);
+
+insert into orte(name, land, einwohner, flaeche)
+values ('München', 'Deutschland', 1472000, 310700000);
+
+insert into orte(name, land, einwohner, flaeche) 
+values ('Berlin', 'Deutschland', 3645000, 891800000);
+		
+insert into attraktionen(name, beschreibung, ort_id) 
+values ('Brandenburger Tor', 
+'Das B. T. ist ein frühklassizistisches Triumphtor', 4);
+
+insert into attraktionen(name, beschreibung, ort_id) 
+values ('Fernsehturm Berlin', 'Sendeturm mit schöner Aussicht', 4);
+
+insert into attraktionen(name, beschreibung, ort_id)
+values ('Hofbräuhaus München', 'Weltberühmtes Wirtshaus', 3);
+\end{verbatim}
+Versuch gegen referentielle Integrität zu Verstoßen: insert into attraktionen(name, beschreibung, ort\_id) values ('Europapark-Rust', 'Freizeitpark', 5);\\
+Fehlermeldung: \\
+ \textcolor{red}{Referentielle Integrität verletzt:"CONSTRAINT\_E8: PUBLIC.ATTRAKTIONEN FOREIGN KEY(ORT\_ID) REFERENCES PUBLIC.ORTE(ORT\_ID) (5)''}
+\section{Aufgabe}
+\subsection{}
+Einf"ugen:\\
+\begin{verbatim}
+alter table orte add column laengengrad decimal(17,7);
+alter table orte add column breitengrad decimal(17,7);
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+update orte set laengengrad = 6.9583 where ort_id = 1;
+update orte set breitengrad = 50.9413 where ort_id = 1;
+update orte set laengengrad = 9.1829 where ort_id = 2;
+update orte set breitengrad = 48.7758 where ort_id = 2;
+update orte set laengengrad = '11.5755' where ort_id = 3;
+update orte set breitengrad = '48.1372' where ort_id = 3;
+update orte set laengengrad = 13.3777 where ort_id = 4;
+update orte set breitengrad = 52.5162 where ort_id = 4;
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+alter table attraktionen drop column beschreibung;
+\end{verbatim}
+\subsection{}
+Tabellen löschen:
+\begin{verbatim}
+drop table attraktionen;
+drop table orte;
+\end{verbatim}
+Tabellen wieder anlegen:
+\begin{verbatim}
+create table orte 
+(
+ort_id int generated always as identity primary key,
+name varchar(80),
+land varchar(50),
+einwohner int,
+flaeche int
+);
+create table attraktionen(
+a_id int generated always as identity primary key,
+name varchar(50),
+beschreibung varchar(50),
+ort_id int
+);
+alter table attraktionen 
+add constraint ref_tabelle_orte foreign key(ort_id) references orte(ort_id);
+
+\end{verbatim}
+\section{Aufgabe}
+\subsection{}
+\begin{verbatim}
+create table reise
+(
+id int generated always as identity primary key,
+ziel varchar(20),
+preis int,
+dauer int,
+verkehrsmittel varchar(20),
+anfangsdatum varchar(20)
+)
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+create table reise
+(
+id int generated always as identity primary key,
+ziel varchar(20),
+dauer int  check (dauer>0),
+preis int  check (preis>= dauer* 50),
+verkehrsmittel varchar(20),
+anfangsdatum varchar(20)
+)
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+create table reise
+(
+id int generated always as identity primary key,
+ziel varchar(20),
+dauer int  check (dauer>0),
+preis int  check (preis>= dauer* 50),
+verkehrsmittel varchar(20),
+anfangsdatum varchar(20)
+)
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+create table verkehrsmittel(
+v_id int generated always as identity primary key,
+name varchar(20)
+);
+create table ziel(
+o_id int generated always as identity primary key,
+name varchar(80)
+);
+create table reise(
+r_id int generated always as identity primary key,
+preis int,
+dauer int,
+anfangsdatum varchar(20),
+o_id int references ziel,
+v_id int references verkehrsmittel
+)
+\end{verbatim}
+$\Rightarrow$Namen ausschreiben, hilfreich bei großen Tabellen\\
+Daten Einfügen:
+\begin{verbatim}
+insert into ziel(name) values('Freiburg');
+insert into ziel(name) values('München');
+insert into ziel(name) values('Hamburg');
+insert into verkehrsmittel(name) values('Auto');
+insert into verkehrsmittel(name) values('Bahn');
+insert into verkehrsmittel(name) values('Flugzeug');
+
+insert into reise(preis, dauer, anfangsdatum, o_id, v_id)
+values(200, 2, '10.10.2023', 1, 3);
+
+insert into reise(preis, dauer, anfangsdatum, o_id, v_id)
+values(1000, 8, '12.10.2023', 2, 2);
+
+insert into reise(preis, dauer, anfangsdatum, o_id, v_id) 
+values(150, 3, '9.8.2023', 3, 1);
+\end{verbatim}
+\section{Aufgabe}
+\subsection{}
+\begin{verbatim}
+alter table titanic add column p_id int
+generated always as identity primary key;
+\end{verbatim}
+\subsection{}
+Befehl:
+\begin{verbatim}
+Select distinct embarked 
+from titanic
+\end{verbatim}
+Werte: null, C, Q, S\\
+\\
+Befehl:
+\begin{verbatim}
+Select distinct sibsp
+from titanic
+\end{verbatim}
+Werte:	0, 1, 2, 3, 4, 5, 8\\
+\\
+Befehl:
+\begin{verbatim}
+Select distinct parch
+from titanic
+\end{verbatim}
+Werte:	0, 1, 2, 3, 4, 5, 6, 9
+\subsection{}
+Integritätsregeln:
+\begin{verbatim}
+alter table titanic add constraint titcanic_class 
+check(class =3 or class = 2 or class = 1); 
+
+alter table titanic add constraint titcanic_survived 
+check(survived = 0 or survived = 1); 
+
+alter table titanic add constraint titcanic_gender 
+check(gender = 'male' or gender = 'female'); 
+
+alter table titanic add constraint titcanic_embarked 
+check(embarked = null or embarked = 'Q' or embarked ='C' or embarked = 'S');
+
+alter table titanic add constraint titcanic_parch 
+check(parch >= 0 and parch<= 6 or parch = 9);
+
+alter table titanic add constraint titcanic_sibsp 
+check(sibsp >=0 and sibsp <= 5 or sibsp = 8);
+
+alter table titanic add constraint titcanic_fare 
+check(fare >=0); 
+
+alter table titanic add constraint titcanic_age
+check(age >=0 or age = null); 
+
+alter table titanic add constraint titanic_body 
+check(body = null or body >0)
+\end{verbatim}
+$\Rightarrow$ Stellen sicher, dass für class, survived, gender, embarked, parch, sibsp, fare, age, und body keine falschen Eingaben getätigt werden können. \\
+$\Rightarrow$null muss nicht gecheckt und wenn dann mit "is null".\\
+\\
+$\Rightarrow$ Alternativer und kürzerer Befehl:
+\begin{verbatim}
+alter table titanic add constraint titcanic_embarked 
+check(embarked in 'Q', 'C', 'S');
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+create table embarked(
+o_id int generated always as identity primary key,
+ortkuerz varchar(5)
+)
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+insert into embarked(ortkuerz)
+Select distinct embarked
+From titanic
+\end{verbatim}
+\subsection{}
+\begin{verbatim}
+alter table embarked add column ortsname varchar(30); 
+\end{verbatim}
+$\Rightarrow$ Ortsname hinzufügen
+\begin{verbatim}
+alter table embarked add constraint embarked_unique_kuerz unique(ortkuerz) 
+\end{verbatim}
+$\Rightarrow$ Stellt sicher, dass jedes kürzel nur einmal verwendet wird.\\
+\\
+Sofern man sich sicher ist, dass die Titanic nur in "`Cherbourg"', "`Queenstwon"' und "`Southampton"' angelegte, sind auch folgende Integritätsregeln möglich:
+\begin{verbatim}
+alter table embarked add constraint embarked_ortkuerz 
+check(ortkuerz = 'C' or ortkuerz = 'Q' or ortkuerz = 'S') 
+\end{verbatim}
+$\Rightarrow$ erlaubt nur Ortskürzel mit den Buchstaben "`C"', "`Q"' oder "`S"'\\
+\begin{verbatim}
+alter table embarked add constraint embarked_ortsname 
+check(ortsname = 'Cherbourg' or ortsname= 'Queenstown' or 
+ortsname = 'Southampton') 
+\end{verbatim}
+$\Rightarrow$ erlaubt nur die Orte "`Cherbourg"', "`Queenstown"' oder "`Southampton"'
+\subsection{}
+\begin{verbatim}
+update embarked
+Set ortsname = 'Cherbourg'
+Where ortkuerz = 'C'
+
+update embarked
+Set ortsname = 'Queenstown'
+Where ortkuerz = 'Q'
+
+update embarked
+Set ortsname = 'Southampton'
+Where ortkuerz = 'S'
+\end{verbatim}
+
+\end{document}
