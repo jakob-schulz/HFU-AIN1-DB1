@@ -3,26 +3,31 @@
 \usepackage[german,ngerman]{babel}
 \usepackage{fontenc}
 \usepackage[pdftex]{graphicx}
-\usepackage{listings}
 \usepackage{xcolor}
+\usepackage{listings}
 
-\definecolor{codegreen}{rgb}{0,0.6,0}
 
-
-\lstdefinestyle{mystyle}{  
-    commentstyle=\color{codegreen},
-    basicstyle=\ttfamily,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                                    
-    numbersep=5pt,                                 
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2
+\definecolor{dunkelblau}{RGB}{16, 55, 188}
+\definecolor{orange}{RGB}{255, 60, 0}
+\definecolor{gruen}{RGB}{18, 118, 34}
+\definecolor{gelb}{RGB}{255, 200, 0}
+\definecolor{lila}{RGB}{147, 18, 114}
+\lstdefinestyle{sql}{
+language=sql,
+commentstyle=\color{gruen}, 
+keywordstyle =\color{dunkelblau}, 
+%Bis hier hin Farbgebung
+frame=single, % Umrandung des Codes
+rulecolor=\color{lightgray},
+numbers=left, % Nummerierung hinzufügen (links)
+numberstyle=\tiny, % Stil der Zeilennummern
+stepnumber=1, % Schrittzahl für die Nummerierung
+numbersep=5pt, % Abstand zwischen Nummerierung und Code
+basicstyle=\sffamily, % Ändert die Schriftart des Codes
+tabsize = 4, %Tab-Abstand
+breaklines=true, %Zeilenumbruch
+showstringspaces=false
 }
-
-\lstset{style=mystyle}
 
 \renewcommand*{\thesubsection}{\alph{subsection}.}
 
@@ -39,7 +44,7 @@ Ausarbeitung \"Ubung 6}
 \section{Aufgabe}
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select name
 from titanic
 where ticket = 'A/5. 3336'
@@ -48,21 +53,21 @@ Es handelt sich um ein Paar, welches die selbe Ticketnummer hat. Bei der Frau st
 \subsection{}
 Die Spalte sibsp zeigt an, wie viele Verwandte auf dem Schiff waren. Die Spalte parch gibt an, wie viele Kinder und Eltern eine Person hatte\\
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select *
 from titanic
 where sibsp = 0 and parch = 0
 \end{lstlisting}
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select distinct class
 from titanic
 \end{lstlisting}
 Es gab die Klassen 1, 2 und 3.
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select name, fare, ticket
 from titanic
 where fare is null
@@ -71,7 +76,7 @@ where fare is null
 \newpage
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select name, fare
 from titanic
 where fare = 0;
@@ -79,7 +84,7 @@ where fare = 0;
 \includegraphics [width = 4 cm] {e}
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select ticket
 from titanic
 where name like '%Astor%'
@@ -87,7 +92,7 @@ where name like '%Astor%'
 John Jacob Astor ist mit dem Ticket "`PC 17757"' gereist.
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select *
 from titanic
 where ticket = 'PC 17757'
@@ -97,7 +102,7 @@ Es sind Person mit Astor gereist, die nicht mit ihm verwandt sind\\
 \includegraphics [width = 15 cm] {g}
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select name, boat, survived
 from titanic
 where boat is null and survived = 1
@@ -105,7 +110,7 @@ where boat is null and survived = 1
 Es gibt Personen, die ohne Platz "uberlebt haben.
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select name, boat, survived
 from titanic
 where boat is not null and survived = 0
@@ -116,7 +121,7 @@ Ja, es gab Personen, die trotz einen Platz in einem Rettungsboot nicht überlebt
 \newpage
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select *
 from titanic
 where gender = 'male' and name not like '%Master%' 
@@ -125,13 +130,13 @@ and name not like '%Mr.%'
 \includegraphics [width = 15 cm] {j}
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select distinct boat
 from titanic
 \end{lstlisting}
 Man kann die Antwort nicht ohne weiteres ermitteln, weil mehrere Werte (Boote) in einer Zeile eingetragen sind. Vermutung: Man wusste bei manchen Personen nicht, in welchem Rettungsboot sie waren.\\
 Man bekommt alle Zeilen mit nur einem Wert durch:\\
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select distinct boat
 from titanic
 where boat not like '% %'
@@ -140,7 +145,7 @@ where boat not like '% %'
 \newpage
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select name, home
 from titanic
 where upper(home) like '%GERMANY%'
@@ -151,7 +156,7 @@ Ich habe hier upper verwendet, um zu vermeiden, dass kleine Schreibweisen nicht 
 \newpage
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select name, age, gender
 from titanic
 where age between 10 and 16 and gender = 'female'
@@ -161,7 +166,7 @@ Hier habe ich 10 und 16 als Grenzen verwendet, weil bei between die Grenzen auch
 \includegraphics [width = 10 cm] {m}
 \subsection{}
 SQL-Anweisung:
-\begin{lstlisting}
+\begin{lstlisting}[style = sql]
 select name, age, sibsp
 from titanic
 where age <= 12 and sibsp = 0 and parch = 0;
