@@ -55,7 +55,7 @@ where ticket in ('113038', '1601', '21228', 'C 17368', 'A/5 21173', 'A./5. 2152'
 Select count(*) as "Anzahl Passagiere"
 from titanic
 \end{lstlisting}
-Die Datensatz enth"alt 1309 Daten.
+Der Datensatz enth"alt 1309 Daten.
 \subsection{}
 \begin{lstlisting}[style = sql]
 Select count(*) as Anzahl, survived
@@ -71,6 +71,7 @@ from titanic
 group by age <=15 and age >15
 \end{lstlisting}
 Problem: Man weiß nicht, welche Zahl f"ur welche Altersgruppe steht\\
+\\
 Zweiter Ansatz
 \begin{lstlisting}[style = sql]
 Select count(*) as "Hoechstens 15 Jahre"
@@ -81,7 +82,7 @@ from titanic
 where age >15
 \end{lstlisting}
 115 Passagiere waren hoechstens 15 Jahre alt und 931 Passagiere waren "Alter als 15 Jahre.\\
-Vergleich mit Aufgabenteil b): Addiert man die Anzahl der beiden Altersgruppen auf, so stellt man fest, dass diese Gesamtanzahl geringer als die Gesamtanzahl der Datens"atze ist. Meine Erklärung ist, dass man bei manchen Passagieren nicht wusste wir alt sie sind. 
+Vergleich mit Aufgabenteil b): Addiert man die Anzahl der beiden Altersgruppen auf, so stellt man fest, dass diese Gesamtanzahl geringer als die Gesamtanzahl der Datens"atze ist. Meine Erklärung ist, dass man bei manchen Passagieren nicht wusste wir alt sie sind und ihr Alter somit "`null"' ist.
 \subsection{}
 \begin{lstlisting}[style = sql]
 Select avg(age) as Durchschnittsalter, max(age) as "Aeltester Passagier", min(age) as "Juengster Passagier"
@@ -101,7 +102,7 @@ where boat like '__' or boat like '_'
 \end{lstlisting}
 \subsection{}
 \begin{lstlisting}[style = sql]
-Select distinct boat, count(*) as "Anzahl Pssagiere"
+Select boat, count(*) as "Anzahl Pssagiere"
 from titanic
 where boat like '__' or boat like '_'
 group by boat
@@ -109,7 +110,7 @@ group by boat
 \subsection{}
 Erster Ansatz:
 \begin{lstlisting}[style = sql]
-Select distinct boat, count(*) as Anzahl_Passagiere
+Select boat, count(*) as Anzahl_Passagiere
 from titanic
 where boat like '__' or boat like '_'
 group by boat
@@ -131,17 +132,16 @@ Wenn man as Ticket möchte:
 Select ticket
 from titanic
 group by ticket
-having sum(fare) != min(fare)*count(*)  --Ueberprueft, ob die Ticketspreise eines Tickets verschieden sind.
+having count(distinct fare) > 1 --Es werden die Tickets herausgefiltert, deren doublettenfreier Preis groesser als 1 ist. Es werden somit die Tickets gezeigt, die unterschiedliche Preise haben
 \end{lstlisting}
 Mit hilfe einer verschachtelten Abfrage lassen sich zus"atlich die Besitzer des Tickets herausfinden.
 \begin{lstlisting}[style = sql]
 Select*
 from titanic
-where ticket =(
-Select ticket
+where ticket =(Select ticket
 from titanic
 group by ticket
-having sum(fare) != min(fare)*count(*))
+having count(distinct fare) > 1)
 \end{lstlisting}
 \subsection{}
 \begin{lstlisting}[style = sql]
