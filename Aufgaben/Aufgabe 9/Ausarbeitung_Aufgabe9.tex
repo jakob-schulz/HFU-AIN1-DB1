@@ -1,0 +1,134 @@
+\documentclass[a4paper, 11pt, titlepage]{article}
+\usepackage{ucs}
+\usepackage[german,ngerman]{babel}
+\usepackage{fontenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+
+
+\definecolor{dunkelblau}{RGB}{16, 55, 188}
+\definecolor{orange}{RGB}{255, 60, 0}
+\definecolor{gruen}{RGB}{18, 118, 34}
+\definecolor{gelb}{RGB}{255, 200, 0}
+\definecolor{lila}{RGB}{147, 18, 114}
+\lstdefinestyle{sql}{
+language=sql,
+ literate=
+    {'}{{\textquotesingle}}1, % ' wird als Apostroph ausgegeben
+commentstyle=\color{gruen}, 
+keywordstyle =\color{dunkelblau}, 
+%Bis hier hin Farbgebung
+frame=single, % Umrandung des Codes
+rulecolor=\color{lightgray},
+numbers=left, % Nummerierung hinzufügen (links)
+numberstyle=\tiny, % Stil der Zeilennummern
+stepnumber=1, % Schrittzahl für die Nummerierung
+numbersep=5pt, % Abstand zwischen Nummerierung und Code
+basicstyle=\sffamily, % Ändert die Schriftart des Codes
+tabsize = 4, %Tab-Abstand
+breaklines=true, %Zeilenumbruch
+showstringspaces=false
+}
+
+\renewcommand*{\thesubsection}{\alph{subsection}.}
+
+\begin{document}
+\title{Datenbanken \\
+Ausarbeitung \"Ubung 9}
+
+\author{Jakob Schulz}
+
+\date{\today}
+
+\maketitle{\thispagestyle{plain}}
+
+\section{Aufgabe}
+\subsection{DDL Anweisungen}
+\begin{lstlisting}[style = sql]
+create table fakultaet(
+id int generated always as identity primary key,
+name varchar(50)
+);
+\end{lstlisting}
+\begin{lstlisting}[style = sql]
+create table dozent(
+id int generated always as identity primary key,
+vorname varchar(50),
+nachname varchar(50),
+fakultaet int not null references fakultaet
+);
+\end{lstlisting}
+\begin{lstlisting}[style = sql]
+create table student(
+id int generated always as identity primary key,
+vorname varchar(50),
+nachname varchar(50),
+matrikelnummer int unique,
+fakultaet int references fakultaet
+);
+\end{lstlisting}
+\begin{lstlisting}[style = sql]
+create table vorlesung(
+id int generated always as identity primary key,
+name varchar(80),
+abkuerzung varchar(7) unique,
+dozent int not null references dozent
+);
+\end{lstlisting}
+\begin{lstlisting}[style = sql]
+create table vorlesungStudent(
+vorlesung int not null references vorlesung,
+student int not null references student, 
+primary key(vorlesung, student)
+);
+\end{lstlisting}
+Mal ausprobieren, ob "`not null"'-Constraint hier weg gelassen werden kann!!
+\newpage
+\subsection{Daten einf"ugen}
+\begin{lstlisting}[style = sql]
+insert into fakultaet(name)
+values('Informatik');
+insert into fakultaet(name) 
+values('Medical and Life Sciences');
+insert into fakultaet(name) 
+values('Digitale Medien');
+insert into fakultaet(name) 
+values('Industrial Technologies');
+\end{lstlisting}
+\begin{lstlisting}[style = sql]
+insert into student(vorname, nachname, matrikelnummer) values('Jakob', 'Schulz', 23456);
+insert into student(vorname, nachname, matrikelnummer) values('Julian', 'Faller', 12121);
+insert into student(vorname, nachname, matrikelnummer) values('Leon', 'Kramar', 33345);
+insert into student(vorname, nachname, matrikelnummer) values('Tim', 'Ringwald', 12345);
+insert into student(vorname, nachname, matrikelnummer, fakultaet) values('Dominik', 'Mueller', 23496, 3);
+\end{lstlisting}
+\begin{lstlisting}[style = sql]
+insert into dozent(vorname, nachname, fakultaet) values('Olaf', 'Neisse', 1);
+insert into dozent(vorname, nachname, fakultaet) values('Ralf', 'Gerlich', 1);
+insert into dozent(vorname, nachname, fakultaet) values('Pascal', 'Laube', 1);
+\end{lstlisting}
+\begin{lstlisting}[style = sql]
+insert into vorlesung(name, dozent) 
+values('Mathematik fuer Informatiker 1', 1);
+insert into vorlesung(name, dozent) 
+values('Einfuehrung in die Informatik', 2);
+insert into vorlesung(name, dozent) 
+values('Programmieren', 3);
+\end{lstlisting}
+\newpage
+\begin{lstlisting}[style = sql]
+insert into VORLESUNGSTUDENT values (4,1);
+insert into VORLESUNGSTUDENT values (5,1);
+insert into VORLESUNGSTUDENT values (6,1);
+insert into VORLESUNGSTUDENT values (4,2);
+insert into VORLESUNGSTUDENT values (5,2);
+insert into VORLESUNGSTUDENT values (6,2);
+insert into VORLESUNGSTUDENT values (4,3);
+insert into VORLESUNGSTUDENT values (5,3);
+insert into VORLESUNGSTUDENT values (6,3);
+insert into VORLESUNGSTUDENT values (4,4);
+insert into VORLESUNGSTUDENT values (5,4);
+insert into VORLESUNGSTUDENT values (6,4);
+\end{lstlisting}
+\end{document}
