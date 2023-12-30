@@ -1,0 +1,153 @@
+\documentclass[a4paper, 11pt, titlepage]{article}
+\usepackage{ucs}
+\usepackage[german,ngerman]{babel}
+\usepackage{fontenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+
+
+\definecolor{dunkelblau}{RGB}{16, 55, 188}
+\definecolor{orange}{RGB}{255, 60, 0}
+\definecolor{gruen}{RGB}{18, 118, 34}
+\definecolor{gelb}{RGB}{255, 200, 0}
+\definecolor{lila}{RGB}{147, 18, 114}
+\lstdefinestyle{sql}{
+language=sql,
+ literate=
+    {'}{{\textquotesingle}}1, % ' wird als Apostroph ausgegeben
+commentstyle=\color{gruen}, 
+keywordstyle =\color{dunkelblau}, 
+%Bis hier hin Farbgebung
+frame=single, % Umrandung des Codes
+rulecolor=\color{lightgray},
+numbers=left, % Nummerierung hinzufügen (links)
+numberstyle=\tiny, % Stil der Zeilennummern
+stepnumber=1, % Schrittzahl für die Nummerierung
+numbersep=5pt, % Abstand zwischen Nummerierung und Code
+basicstyle=\sffamily, % Ändert die Schriftart des Codes
+tabsize = 4, %Tab-Abstand
+breaklines=true, %Zeilenumbruch
+showstringspaces=false
+}
+
+\renewcommand*{\thesubsection}{\alph{subsection}.}
+
+\begin{document}
+\title{Datenbanken \\
+Ausarbeitung \"Ubung 11}
+
+\author{Jakob Schulz}
+
+\date{\today}
+
+\maketitle{\thispagestyle{plain}}
+\noindent In den folgenden Aufgaben nutzen Sie die gleichen Daten wie in Aufgabenblatt 10. Ihre Lösungen 
+dürfen nur syntaktische Elemente enthalten, die in der Vorlesung erläutert wurden. Insbesondere 
+sind Konstruktionen wie limit oder Unterabfragen im from-Teil nicht zulässig.
+\section{Aufgabe}
+\begin{lstlisting}[style = sql]
+Select count(*) as "Anzahl Passagiere"
+From  titanic, embarked
+where embarked.id = titanic.embarked_id
+group by embarked.id;
+\end{lstlisting}
+\section{Aufgabe}
+\subsection{Ermitteln Sie Alter und Namen des ältesten Passagiers. Wenn es mehrere älteste Passagiere 
+gibt, müssen sie alle gefunden werden.}
+\begin{lstlisting}[style = sql]
+Select titanic.name, titanic.age
+From titanic
+Where titanic.age in 
+(
+Select max(age)
+From titanic
+);
+\end{lstlisting}
+Hier "`in"' Operator oder "`="' verwenden?\\
+Es k"onnte ja sein, dass es mehrere älteste Personen gibt. W"urde der "`="'-Operator dann einen Fehler geben?
+\subsection{Anweisung ohne Join, sondern mit einer Unterabfrage formulieren}
+\begin{lstlisting}[style = sql]
+select count(*)
+from titanic 
+where titanic.embarked_id = 
+(
+Select embarked.id
+from embarked
+where embarked.city like '%town'
+);
+\end{lstlisting}
+\subsection{Bonusaufgabe: Finden Sie eine Lösung für b., die den in-Operator nicht verwendet}
+Wieso funktioniert obere L"osung?\\
+Hier wird in der Unterabfrage auch eine Menge zur"uckgegeben, deshalb m"usste "`="' hier auch eine Fehlermeldung geben.
+\begin{lstlisting}[style = sql]
+
+\end{lstlisting}
+\subsection{Welche id hat der Hafen, in dem die wenigsten Passagier zugestiegen sind? Formulieren Sie 
+dazu eine einzige - verschachtelte - Abfrage}
+\begin{lstlisting}[style = sql]
+--ID des Hafens mit der geringsten Anzahl an zugestiegenen Passagieren wird ausgegeben:
+Select embarked_id
+from titanic, embarked
+where embarked.id = titanic.embarked_id
+group by embarked.id
+having count(*) =
+(
+	--kleinste Anzahl der zugestiegenen Passagiere wird bestimmt:
+	Select count(*)
+	From  titanic, embarked
+	where embarked.id = titanic.embarked_id
+	group by embarked.id
+	having count(*) <= all
+	(
+		--man erhaelt Anzahl an Passageren, die in den Zustiegshaefen aufgenommen wurden:
+		Select count(*)
+		From  titanic, embarked
+		where embarked.id = titanic.embarked_id
+		group by embarked.id	
+	)
+);
+\end{lstlisting}
+Geht Abfrage auch ohne "`all"'?\\
+Geht Abfrage auch einfacher?
+\newpage
+\subsection{Ermitteln Sie mit einer einzigen Anweisung die Namen der Passagiere, die in dem Hafen 
+zugestiegen sind, in dem die wenigsten Passagier zugestiegen sind}
+\begin{lstlisting}[style = sql]
+--Name der Passagiere, die in dem Hafen zugestiegen sind werden ausgegeben
+Select name
+from titanic
+where embarked_id = 
+(
+	--ID des Hafens mit der geringsten Anzahl an zugestiegenen Passagieren wird ausgegeben:
+	Select embarked_id
+	from titanic, embarked
+	where embarked.id = titanic.embarked_id
+	group by embarked.id
+	having count(*) =
+	(
+		--kleinste Anzahl der zugestiegenen Passagiere wird bestimmt:
+		Select count(*)
+		From  titanic, embarked
+		where embarked.id = titanic.embarked_id
+		group by embarked.id
+		having count(*) <= all
+		(
+			--man erhaelt Anzahl an Passageren, die in den Zustiegshaefen aufgenommen wurden:
+			Select count(*)
+			From  titanic, embarked
+			where embarked.id = titanic.embarked_id
+			group by embarked.id	
+		)
+	)
+);
+\end{lstlisting}
+\subsection{Problem der folgenden Abfrage ermitteln}
+\begin{lstlisting}[style = sql]
+select name, age 
+from titanic 
+where age>=all (select age from titanic)
+\end{lstlisting}
+Bei manchen Passagieren ist das Alter unbekannt ("`null"'). Da "`null"' hier nicht ignoriert wird, wird nichts ausgegeben. Zudem gilt f"ur kein Alter:\\
+age $>$ null
+\end{document}
