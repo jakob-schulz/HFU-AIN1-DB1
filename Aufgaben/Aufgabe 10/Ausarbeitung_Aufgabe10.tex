@@ -106,15 +106,15 @@ where titanic.name like '%Lovell%';
 Select embarked.city, count(*)
 from titanic, embarked
 where embarked.id = titanic.embarked_id
-group by embarked_id
+group by embarked.city
 \end{lstlisting}
-Frage: Wieso funktioniert hier group by. Funktionier, aber laut seiner Vorlesung m"usste man group by embarked.city!!!
 \begin{lstlisting}[style = sql]
 Select embarked.city, count(*)
 from titanic 
 inner join embarked on embarked.id = titanic.embarked_id
-group by embarked_id
+group by embarked.city
 \end{lstlisting}
+\verb+group by embarked.id+ funktioniert auch, aber laut seiner Vorlesung m"usste man group by embarked.city verwenden
 \subsection{Gesucht sind Name, Ticketnummer aus der Spalte 'name' in der Tabelle 'tickets'
 und der Zustiegshafen des Passagiers mit der ID 1014}
 \begin{lstlisting}[style = sql]
@@ -135,17 +135,16 @@ Gesucht sind die Werte aus der Spalte 'name' in der Tabelle 'tickets'
 Select tickets.name
 from tickets, titanic
 where tickets.id = titanic.ticket_id
-group by titanic.ticket_id
+group by tickets.name
 having count(*)  > 1
 \end{lstlisting}
 \begin{lstlisting}[style = sql]
 Select tickets.name
 from titanic
 inner join tickets on tickets.id = titanic.ticket_id
-group by titanic.ticket_id
+group by tickets.name
 having count(*)  > 1
 \end{lstlisting}
-Frage: Wieso funktioniert hier group by?
 \subsection{Gibt es Personen, die mit dem gleichen Ticket gereist sind, aber in verschieden Häfen 
 zugestiegen sind?}
 Gesucht sind die Namen, die Ticketnummer und die Zustiegshäfen.\\
@@ -154,14 +153,14 @@ Man kann auf Grund von group by nur die Ticketnummer ausgeben, aber nochmal nach
 Select tickets.name as Ticketnummer
 from titanic, tickets
 where tickets.id = titanic.ticket_id
-group by titanic.ticket_id
+group by tickets.name
 having count(titanic.name) > 1 and count(distinct titanic.embarked_id) > 1
 \end{lstlisting}
 \begin{lstlisting}[style = sql]
 Select tickets.name as Ticketnummer
 from titanic
 inner join tickets on tickets.id = titanic.ticket_id
-group by titanic.ticket_id
+group by tickets.name
 having count(titanic.name) > 1 and count(distinct titanic.embarked_id) > 1
 \end{lstlisting}
 \end{document}

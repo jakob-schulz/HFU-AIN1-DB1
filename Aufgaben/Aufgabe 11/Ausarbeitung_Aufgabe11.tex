@@ -58,19 +58,18 @@ gibt, müssen sie alle gefunden werden.}
 \begin{lstlisting}[style = sql]
 Select titanic.name, titanic.age
 From titanic
-Where titanic.age in 
+Where titanic.age = 
 (
 Select max(age)
 From titanic
 );
 \end{lstlisting}
-Hier "`in"' Operator oder "`="' verwenden?\\
-Es k"onnte ja sein, dass es mehrere älteste Personen gibt. W"urde der "`="'-Operator dann einen Fehler geben?
+Wieso nicht immer "`in"' in verwenden?
 \subsection{Anweisung ohne Join, sondern mit einer Unterabfrage formulieren}
 \begin{lstlisting}[style = sql]
 select count(*)
 from titanic 
-where titanic.embarked_id = 
+where titanic.embarked_id in 
 (
 Select embarked.id
 from embarked
@@ -78,35 +77,34 @@ where embarked.city like '%town'
 );
 \end{lstlisting}
 \subsection{Bonusaufgabe: Finden Sie eine Lösung für b., die den in-Operator nicht verwendet}
-Wieso funktioniert obere L"osung?\\
-Hier wird in der Unterabfrage auch eine Menge zur"uckgegeben, deshalb m"usste "`="' hier auch eine Fehlermeldung geben.
 \begin{lstlisting}[style = sql]
-
+Select count(*)
+from titanic
+where exists
+(
+	Select embarked.id
+	from embarked
+	where titanic.embarked_id = embarked.id and embarked.city like '%town'
+)
 \end{lstlisting}
+Fragen, ob diese Lösung richtig ist!
 \subsection{Welche id hat der Hafen, in dem die wenigsten Passagier zugestiegen sind? Formulieren Sie 
 dazu eine einzige - verschachtelte - Abfrage}
 \begin{lstlisting}[style = sql]
 --ID des Hafens mit der geringsten Anzahl an zugestiegenen Passagieren wird ausgegeben:
-Select embarked_id
-from titanic, embarked
-where embarked.id = titanic.embarked_id
+Select embarked.id
+From  titanic, embarked
+where embarked.id = titanic.embarked_id	
 group by embarked.id
-having count(*) =
+having count(*) <= all	
 (
-	--kleinste Anzahl der zugestiegenen Passagiere wird bestimmt:
+	--man erhaelt Anzahl an Passageren, die in den Zustiegshaefen aufgenommen wurden:
 	Select count(*)
 	From  titanic, embarked
 	where embarked.id = titanic.embarked_id
-	group by embarked.id
-	having count(*) <= all
-	(
-		--man erhaelt Anzahl an Passageren, die in den Zustiegshaefen aufgenommen wurden:
-		Select count(*)
-		From  titanic, embarked
-		where embarked.id = titanic.embarked_id
-		group by embarked.id	
-	)
-);
+	group by embarked.id	
+); 
+
 \end{lstlisting}
 Geht Abfrage auch ohne "`all"'?\\
 Geht Abfrage auch einfacher?
@@ -117,29 +115,21 @@ zugestiegen sind, in dem die wenigsten Passagier zugestiegen sind}
 --Name der Passagiere, die in dem Hafen zugestiegen sind werden ausgegeben
 Select name
 from titanic
-where embarked_id = 
+where embarked_id in 
 (
 	--ID des Hafens mit der geringsten Anzahl an zugestiegenen Passagieren wird ausgegeben:
-	Select embarked_id
-	from titanic, embarked
+	Select embarked.id
+	From  titanic, embarked
 	where embarked.id = titanic.embarked_id
 	group by embarked.id
-	having count(*) =
+	having count(*) <= all
 	(
-		--kleinste Anzahl der zugestiegenen Passagiere wird bestimmt:
+		--man erhaelt Anzahl an Passageren, die in den Zustiegshaefen aufgenommen wurden:
 		Select count(*)
 		From  titanic, embarked
 		where embarked.id = titanic.embarked_id
-		group by embarked.id
-		having count(*) <= all
-		(
-			--man erhaelt Anzahl an Passageren, die in den Zustiegshaefen aufgenommen wurden:
-			Select count(*)
-			From  titanic, embarked
-			where embarked.id = titanic.embarked_id
-			group by embarked.id	
-		)
-	)
+		group by embarked.id	
+	) 
 );
 \end{lstlisting}
 \subsection{Problem der folgenden Abfrage ermitteln}
